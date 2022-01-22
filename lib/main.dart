@@ -17,6 +17,7 @@ class MyApp extends StatefulWidget {
 bool _cityEntered = false;
 String? _city = '';
 InfoWeather? mapOfData;
+String? errorMessage;
 
 Future getData(String? cityname) async {
   var url =
@@ -24,6 +25,22 @@ Future getData(String? cityname) async {
   try {
     var response = await Dio().get(url);
     mapOfData = InfoWeather.fromJson(response.data);
+  } on DioError catch (e) {
+    if (e.type == DioErrorType.response) {
+      errorMessage = 'Please provide a correct city name.';
+    }
+    if (e.type == DioErrorType.connectTimeout) {
+      errorMessage = 'Check your connection';
+    }
+
+    if (e.type == DioErrorType.receiveTimeout) {
+      errorMessage = 'Unable to connect to the server';
+    }
+
+    if (e.type == DioErrorType.other) {
+      errorMessage = 'Something went wrong';
+    }
+    print(e);
   } catch (e) {
     print(e);
   }
@@ -49,6 +66,7 @@ class _MyAppState extends State<MyApp> {
           title: TextField(
             controller: _textController,
             decoration: InputDecoration(
+                errorText: errorMessage,
                 border: InputBorder.none,
                 labelText: 'Enter here',
                 suffixIcon: IconButton(
@@ -85,12 +103,11 @@ class _MyAppState extends State<MyApp> {
                       if (snapshot.hasData) {
                         return WeatherDetails();
                       } else {
-                        return const Center(
+                        return  Center(
                           child: Padding(
-                            padding: EdgeInsets.only(bottom: 100),
-                            child: Text(
-                              'Something went wrong, Try again!',
-                              style: TextStyle(fontSize: 20),
+                            padding: const EdgeInsets.only(bottom: 100,left: 20,right: 20),
+                            child: Text(errorMessage!,
+                              style: const TextStyle(fontSize: 15),
                             ),
                           ),
                         );
