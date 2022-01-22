@@ -40,9 +40,6 @@ Future getData(String? cityname) async {
     if (e.type == DioErrorType.other) {
       errorMessage = 'Something went wrong';
     }
-    print(e);
-  } catch (e) {
-    print(e);
   }
   return mapOfData;
 }
@@ -103,10 +100,12 @@ class _MyAppState extends State<MyApp> {
                       if (snapshot.hasData) {
                         return WeatherDetails();
                       } else {
-                        return  Center(
+                        return Center(
                           child: Padding(
-                            padding: const EdgeInsets.only(bottom: 100,left: 20,right: 20),
-                            child: Text(errorMessage!,
+                            padding: const EdgeInsets.only(
+                                bottom: 100, left: 20, right: 20),
+                            child: Text(
+                              errorMessage!,
                               style: const TextStyle(fontSize: 15),
                             ),
                           ),
